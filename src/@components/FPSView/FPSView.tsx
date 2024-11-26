@@ -1,45 +1,40 @@
+import './FPSView.css'
 import { useAnimatedFPS } from '../../@hooks'
 import { useMemo } from 'react'
-
-type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-
-interface FPSViewProps {
-  position?: Position
-  className?: string
-  fontSize?: number
-  color?: string
-}
-
-const classes = {
-  root: 'fps-view',
-  position: {
-    'top-left': 'fps-view--top-left',
-    'top-right': 'fps-view--top-right',
-    'bottom-left': 'fps-view--bottom-left',
-    'bottom-right': 'fps-view--bottom-right',
-  },
-} as const
+import { Histogram } from '../Histogram'
+import { FPSViewProps } from './FPSView.types.ts'
+import { FPS_VIEW_CLASSES } from './FPSView.const.ts'
+import { generateAmplitudeWithFPS } from './FPSView.utils.ts'
 
 export const FPSView: React.FC<FPSViewProps> = ({
   position = 'top-right',
   className,
   fontSize = 28,
-  color = '#123edd',
+  color = 'rgba(0,0,0,0.5)',
   ...props
 }) => {
   const { runtime, fps } = useAnimatedFPS()
-
   const rootClasses = useMemo(() => {
-    return [classes.root, classes.position[position], className]
+    return [
+      FPS_VIEW_CLASSES.root,
+      FPS_VIEW_CLASSES.position[position],
+      className,
+    ]
       .filter(globalThis.Boolean)
       .join(' ')
   }, [className, position])
+  const amplitudeGenerator = (canvasHeight: number) =>
+    generateAmplitudeWithFPS(canvasHeight, fps)
+
   return (
     <div {...props} className={rootClasses} style={{ color }}>
-      <div title="FPS" style={{ fontSize }}>
-        {fps} FPS
+      <div className="fps--view--container">
+        <Histogram color={color} amplitudeGenerator={amplitudeGenerator} />
+        <div title="FPS" style={{ fontSize }}>
+          {fps} FPS
+        </div>
+        <div title="Total runtime">{runtime} Runtime (seconds)</div>
       </div>
-      <div title="Total runtime">{runtime} Runtime (seconds)</div>
     </div>
   )
 }

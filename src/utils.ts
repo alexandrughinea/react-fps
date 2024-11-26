@@ -1,9 +1,10 @@
 export function safeDivide(
-  numerator: number,
-  denominator: number,
+  numerator?: number,
+  denominator?: number,
   fallback = 0
 ): number {
   if (
+    !numerator ||
     !denominator ||
     !globalThis.Number.isFinite(numerator) ||
     !globalThis.Number.isFinite(denominator)

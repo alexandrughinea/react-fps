@@ -7,6 +7,11 @@
   display: flex;
 }
 
+.fps--view--container {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Position variants */
 .fps-view--top-left {
   top: 10px;
